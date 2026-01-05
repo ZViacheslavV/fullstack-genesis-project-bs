@@ -37,7 +37,10 @@ const momStatesSchema = new Schema(
       required: true,
     },
   },
-  { timestamps: false },
+  {
+    timestamps: false,
+    versionKey: false,
+  },
 );
 
 export const MomStatesCollection = model('Mom', momStatesSchema);

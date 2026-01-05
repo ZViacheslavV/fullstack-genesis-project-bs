@@ -43,7 +43,10 @@ const babyStatesSchema = new Schema(
       default: [],
     },
   },
-  { timestamps: false },
+  {
+    timestamps: false,
+    versionKey: false,
+  },
 );
 
 export const BabyStatesCollection = model('Baby', babyStatesSchema);
