@@ -1,4 +1,5 @@
 import { model, Schema } from 'mongoose';
+import { GENDER } from '../constants/genders.js';
 
 const userSchema = new Schema(
   {
@@ -7,23 +8,21 @@ const userSchema = new Schema(
     password: { type: String, required: true },
     gender: {
       type: String,
-      enum: ['boy', 'girl', 'unknown'],
-      default: null,
+      enum: Object.values(GENDER) /* ['boy', 'girl', 'unknown'] */,
+      default: GENDER.UNKNOWN,
+      required: true,
     },
     dueDate: { type: String, default: null },
-    photo: { type: String, default: null },
+    photo: {
+      type: String,
+      default: 'https://ac.goit.global/fullstack/react/default-avatar.jpg',
+    },
   },
   {
     timestamps: true,
     versionKey: false,
   },
 );
-
-/* userSchema.pre('save', async function () {
-  if (!this.username) {
-    this.username = this.email;
-  }
-}); */
 
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
