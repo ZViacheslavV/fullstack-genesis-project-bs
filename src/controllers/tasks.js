@@ -10,8 +10,7 @@ export const createTask = async (req, res) => {
   const task = await TasksCollection.create({
     ...req.body,
     userId: req.user._id,
-  });
-  console.log('knock to controller');
+  });  
   res.status(201).json(task);
 };
 
