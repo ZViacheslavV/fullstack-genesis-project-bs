@@ -10,7 +10,7 @@ const router = Router();
 router.use(authRouter);
 router.use(usersRouter);
 // router.use(tasksRouter);
-router.use(diariesRouter);
+router.use('/diaries', diariesRouter);
 router.use(weeksRouter);
 
 export default router;
