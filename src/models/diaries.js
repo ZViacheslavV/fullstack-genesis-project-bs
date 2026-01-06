@@ -5,14 +5,33 @@ const diarySchema = new Schema(
     title: {
       type: String,
       required: true,
+      minlength: 1,
+      maxlength: 64,
     },
-    text: {
+
+    description: {
       type: String,
       required: true,
+      minlength: 1,
+      maxlength: 1000,
     },
+
+    date: {
+      type: String,
+      default: () => new Date().toISOString().split('T')[0], // YYYY-MM-DD
+    },
+
+    emotions: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Emotion',
+        required: true,
+      },
+    ],
+
     owner: {
       type: Schema.Types.ObjectId,
-      ref: 'user',
+      ref: 'User',
       required: true,
     },
   },
@@ -21,4 +40,4 @@ const diarySchema = new Schema(
   },
 );
 
-export default model('diary', diarySchema);
+export default model('Diary', diarySchema);

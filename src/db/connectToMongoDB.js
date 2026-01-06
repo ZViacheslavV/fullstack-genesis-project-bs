@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
+import '../models/index.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
 import { ENV_VARS } from '../constants/envVars.js';
+
+import '../models/emotions.js';
+import '../models/diaries.js';
+import '../models/user.js';
 
 const clientOptions = {
   serverApi: { version: '1', strict: false, deprecationErrors: true },

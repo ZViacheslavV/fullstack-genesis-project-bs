@@ -1,9 +1,9 @@
-import Diary from '../models/diaries.js';
+import * as diariesService from '../services/diaries.js';
 
-/*Створити щоденник*/
+/* Створити щоденник */
 export const createDiary = async (req, res, next) => {
   try {
-    const diary = await Diary.create({
+    const diary = await diariesService.createDiary({
       ...req.body,
       owner: req.user._id,
     });
@@ -14,23 +14,23 @@ export const createDiary = async (req, res, next) => {
   }
 };
 
-/*Отримати щоденник*/
+/* Отримати щоденники */
 export const getDiaries = async (req, res, next) => {
   try {
-    const diaries = await Diary.find({ owner: req.user._id });
+    const diaries = await diariesService.getDiariesByUser(req.user._id);
     res.json(diaries);
   } catch (error) {
     next(error);
   }
 };
 
-/*Оновити щоденник*/
+/* Оновити щоденник */
 export const updateDiary = async (req, res, next) => {
   try {
-    const diary = await Diary.findOneAndUpdate(
-      { _id: req.params.id, owner: req.user._id },
+    const diary = await diariesService.updateDiary(
+      req.params.id,
+      req.user._id,
       req.body,
-      { new: true },
     );
 
     if (!diary) {
@@ -43,16 +43,13 @@ export const updateDiary = async (req, res, next) => {
   }
 };
 
-/*Видалити щоденник*/
+/* Видалити щоденник */
 export const deleteDiary = async (req, res, next) => {
   try {
-    const diary = await Diary.findOneAndDelete({
-      _id: req.params.id,
-      owner: req.user._id,
-    });
+    const diary = await diariesService.deleteDiary(req.params.id, req.user._id);
 
     if (!diary) {
-      return res.status(404).json({ message: 'Diary not found' });
+      return res.status(404).json({ message: 'Щоденник не знайдено' });
     }
 
     res.status(204).send();
