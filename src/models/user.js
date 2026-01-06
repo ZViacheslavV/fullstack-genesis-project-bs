@@ -3,27 +3,24 @@ import { model, Schema } from 'mongoose';
 const userSchema = new Schema(
   {
     name: { type: String, required: true, trim: true },
-    email: { type: String, required: true, trim: true },
-    password: { type: String, required: true },
+    email: { type: String, unique: true, required: true, trim: true },
+    password: { type: String, required: true, minlength: 8 },
     gender: {
       type: String,
       enum: ['boy', 'girl', 'unknown'],
-      default: null,
+      default: 'unknown',
     },
-    dueDate: { type: String, default: null },
-    photo: { type: String, default: null },
+    dueDate: { type: Date, required: true },
+    avatar: {
+      type: String,
+      default: 'https://ac.goit.global/fullstack/react/default-avatar.jpg',
+    },
   },
   {
     timestamps: true,
     versionKey: false,
   },
 );
-
-/* userSchema.pre('save', async function () {
-  if (!this.username) {
-    this.username = this.email;
-  }
-}); */
 
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
