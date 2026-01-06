@@ -23,5 +23,5 @@ const taskSchema = new Schema({
     },
 }, { timestamps: true, versionKey: false });
 
-export const Task = model('Task', taskSchema);
+export const TasksCollection = model('Task', taskSchema);
 
