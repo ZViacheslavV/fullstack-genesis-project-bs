@@ -26,7 +26,7 @@ export const startServer = () => {
     generateRequestId,
   );
 
-  app.use(router);
+  app.use('/api', router);
 
   app.use('/uploads', express.static(UPLOAD_DIR));
 

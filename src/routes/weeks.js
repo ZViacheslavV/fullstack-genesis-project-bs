@@ -3,7 +3,7 @@ import { getDemoController } from '../controllers/weeks.js';
 
 const weeksRouter = Router();
 
-weeksRouter.get('/api/weeks/demo', getDemoController);
+weeksRouter.get('/weeks/demo', getDemoController);
 
 export default weeksRouter;
 
