@@ -1,7 +1,5 @@
-export const GENDERS = {
-  MALE: 'male',
-  FEMALE: 'female',
-  OTHER: 'other',
-};
-
-//TODO change for appropriate if need
+export const GENDER = Object.freeze({
+  BOY: 'boy',
+  GIRL: 'girl',
+  UNKNOWN: 'unknown',
+});
