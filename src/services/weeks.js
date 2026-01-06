@@ -3,9 +3,8 @@ import { BabyStatesCollection } from '../models/babyStates.js';
 import { calcDaysLeftToBirth, calcCurWeek } from '../utils/calculateDates.js';
 
 export const getMyDay = async (estimateBirthDate) => {
-  if (!estimateBirthDate) {
+  if (!estimateBirthDate)
     throw createHttpError(400, 'estimateBirthDate is required');
-  }
 
   const daysLeftToBirth = calcDaysLeftToBirth(estimateBirthDate);
   const currentWeek = calcCurWeek(daysLeftToBirth);
@@ -14,9 +13,9 @@ export const getMyDay = async (estimateBirthDate) => {
     weekNumber: currentWeek,
   });
 
-  if (!babyState) {
+  if (!babyState)
     throw createHttpError(404, `Baby state not found for week ${currentWeek}`);
-  }
+
   const {
     _id,
     weekNumber,
