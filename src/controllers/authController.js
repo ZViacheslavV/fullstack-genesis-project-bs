@@ -57,7 +57,13 @@ export const loginUser = async (req, res, next) => {
 
     setSessionCookies(res, newSession);
 
-    res.status(200).json(user);
+    res.status(200).json({
+      status: 200,
+      message: 'Successfully logged in a user!',
+      data: {
+        user,
+      },
+    });
   } catch (error) {
     return next(error);
   }
@@ -105,6 +111,10 @@ export const refreshUserSession = async (req, res, next) => {
     res.status(200).json({
       status: 200,
       message: 'Successfully refreshed a session!',
+      data: {
+        accessToken: session.accessToken,
+        refreshToken: session.refreshToken,
+      },
     });
   } catch (error) {
     next(error);
