@@ -4,8 +4,8 @@ import { GENDER } from '../constants/genders.js';
 const userSchema = new Schema(
   {
     name: { type: String, required: true, trim: true },
-    email: { type: String, required: true, trim: true },
-    password: { type: String, required: true },
+    email: { type: String, unique: true, required: true, trim: true },
+    password: { type: String, required: true, minlength: 8 },
     gender: {
       type: String,
       enum: Object.values(GENDER) /* ['boy', 'girl', 'unknown'] */,
