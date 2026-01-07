@@ -1,9 +1,9 @@
-import { validateBody } from '../middlewares/validateBody.js';
-import { createDiarySchema } from '../validation/diaries.js';
-
 import { Router } from 'express';
 import { authenticate } from '../middlewares/authenticate.js';
-import { updateDiarySchema } from '../validation/diaries.js';
+import {
+  createDiaryValidation,
+  updateDiaryValidation,
+} from '../validation/diaries.js';
 import {
   createDiary,
   getDiaries,
@@ -15,9 +15,9 @@ const diariesRouter = Router();
 
 diariesRouter.use(authenticate);
 
-diariesRouter.post('/', validateBody(createDiarySchema), createDiary);
+diariesRouter.post('/', createDiaryValidation, createDiary);
 diariesRouter.get('/', getDiaries);
-diariesRouter.patch('/:id', validateBody(updateDiarySchema), updateDiary);
+diariesRouter.patch('/:id', updateDiaryValidation, updateDiary);
 diariesRouter.delete('/:id', deleteDiary);
 
 export default diariesRouter;
