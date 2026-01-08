@@ -1,6 +1,8 @@
 import { FORTY_WEEKS, ONE_WEEK } from '../constants/times.js';
 
 export const isValidYYYYMMDD = (value) => {
+  if (value == null) return true;
+
   return /^\d{4}-\d{2}-\d{2}$/.test(value);
 };
 
