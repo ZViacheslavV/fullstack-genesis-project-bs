@@ -5,13 +5,13 @@ import {
   getMomController,
   getWeeksController,
 } from '../controllers/weeks.js';
-import { authenticate } from '../middlewares/authenticate.js'; //TODO auth
+// import { authenticate } from '../middlewares/authenticate.js'; //TODO auth
 
 const weeksRouter = Router();
 
 weeksRouter.get('/weeks/demo', getDemoController);
 
-weeksRouter.use('/weeks', authenticate); //TODO auth
+// weeksRouter.use('/weeks', authenticate); //TODO auth
 
 weeksRouter.get('/weeks', getWeeksController);
 weeksRouter.get('/weeks/baby/:weekNumber', getBabyController);
