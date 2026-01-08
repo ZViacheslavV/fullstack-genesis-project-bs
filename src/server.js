@@ -17,10 +17,7 @@ export const startServer = () => {
 
   app.use(
     logger,
-    cors({
-      origin: 'http://localhost:3001', 
-      credentials: true,               
-    }),
+    cors(),
     cookieParser(),
     json({
       type: ['application/vnd.api+json', 'application/json'],

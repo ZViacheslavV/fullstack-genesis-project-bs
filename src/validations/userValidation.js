@@ -1,6 +1,6 @@
 import { Joi, Segments } from 'celebrate';
 import { FORTY_WEEKS, ONE_WEEK } from '../constants/times.js';
-// import { GENDER } from '../constants/genders.js';
+import { GENDERS } from '../constants/genders.js';
 
 export const updateCurrentUserSchema = {
   [Segments.BODY]: Joi.object({
