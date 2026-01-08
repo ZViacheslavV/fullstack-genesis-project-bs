@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import authRouter from './auth.js';
+import authRouter from './authOld.js';
 import usersRouter from './user.js';
 import tasksRouter from './tasks.js';
 import diariesRouter from './diaries.js';

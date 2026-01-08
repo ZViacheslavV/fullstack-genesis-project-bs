@@ -1,39 +1,78 @@
-import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/times.js';
+import createHttpError from 'http-errors';
+import { User } from '../models/user.js';
+import bcrypt from 'bcrypt';
 import crypto from 'crypto';
+import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/times.js';
 import { SessionsCollection } from '../models/session.js';
 
-export const createSession = async (userId) => {
-  const accessToken = crypto.randomBytes(30).toString('base64');
-  const refreshToken = crypto.randomBytes(30).toString('base64');
+const createSession = (userId) => ({
+  userId,
+  accessToken: crypto.randomBytes(30).toString('base64'),
+  refreshToken: crypto.randomBytes(30).toString('base64'),
+  accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
+  refreshTokenValidUntil: new Date(Date.now() + ONE_DAY),
+});
 
-  return SessionsCollection.create({
-    userId,
-    accessToken,
-    refreshToken,
-    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
-    refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
-  });
+export const registerUser = async (payload) => {
+  const existingUser = await User.findOne({ email: payload.email });
+
+  if (existingUser) throw createHttpError(409, 'Email in use');
+
+  const hashedPassword = await bcrypt.hash(payload.password, 10);
+
+  const user = await User.create({ ...payload, password: hashedPassword });
+
+  return user;
 };
 
-export const setSessionCookies = (res, session) => {
-  res.cookie('accessToken', session.accessToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'none',
-    expires: session.accessTokenValidUntil,
-  });
+export const loginUser = async (payload) => {
+  const existingUser = await User.findOne({ email: payload.email });
 
-  res.cookie('refreshToken', session.refreshToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'none',
-    expires: session.refreshTokenValidUntil,
-  });
+  if (!existingUser) throw createHttpError(401, 'Credentials are invalid');
 
-  res.cookie('sessionId', session._id, {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'none',
-    maxAge: THIRTY_DAYS,
-  });
+  const validPassword = await bcrypt.compare(
+    payload.password,
+    existingUser.password,
+  );
+
+  if (!validPassword) throw createHttpError(401, 'Credentials are invalid');
+
+  await SessionsCollection.findOneAndDelete({ userId: existingUser._id });
+
+  const session = await SessionsCollection.create(
+    createSession(existingUser._id),
+  );
+
+  return [session, existingUser];
+};
+
+export const logoutUser = async (sessionId, refreshToken) => {
+  await SessionsCollection.findOneAndDelete({ _id: sessionId, refreshToken });
+};
+
+export const refreshSession = async (sessionId, refreshToken) => {
+  try {
+    const session = await SessionsCollection.findOne({
+      _id: sessionId,
+      refreshToken,
+    });
+
+    if (!session) throw createHttpError(401, 'Session not found');
+
+    if (session.refreshTokenValidUntil < new Date())
+      throw createHttpError(401, 'Session expired');
+
+    const user = await User.findById(session.userId);
+
+    if (!user) throw createHttpError(401, 'Session not found');
+
+    await SessionsCollection.findOneAndDelete({ _id: sessionId, refreshToken });
+
+    const newSession = await SessionsCollection.create(createSession(user._id));
+
+    return newSession;
+  } catch (err) {
+    await SessionsCollection.findOneAndDelete({ _id: sessionId, refreshToken });
+    throw err;
+  }
 };
