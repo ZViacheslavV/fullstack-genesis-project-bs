@@ -1,10 +1,10 @@
-import { clearSession, setSessionCookies } from '../helper/authHelpers.js';
 import {
   loginUser,
   logoutUser,
   refreshSession,
   registerUser,
 } from '../services/auth.js';
+import { clearSession, setSessionCookies } from '../utils/authHelpers.js';
 
 export const registerUserController = async (req, res) => {
   const user = await registerUser(req.body);
