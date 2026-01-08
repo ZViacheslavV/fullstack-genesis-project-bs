@@ -2,16 +2,18 @@ import createHttpError from 'http-errors';
 import { TasksCollection } from '../models/task.js';
 
 export const getMyTasks = async (req, res) => {
-    const tasks = await TasksCollection.find({ userId: req.user._id });
+  const tasks = await TasksCollection.find(
+    //{ userId: req.user._id }
+  ).sort({ date: 1 });
     res.status(200).json(tasks);
 };
 
 export const createTask = async (req, res) => {
-  const task = await TasksCollection.create({
-    ...req.body,
-    userId: req.user._id,
-  });
-  console.log('knock to controller');
+  const task = await TasksCollection.create(req.body //{
+    //...req.body,
+    //userId: req.user._id,
+  //}
+);  
   res.status(201).json(task);
 };
 
