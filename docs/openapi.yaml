@@ -1,0 +1,24 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Genesis project
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: This is pregnant tracker app
+tags:
+  - name: Auth
+    description: Auth operations.
+  - name: Diaries
+    description: Diaries operations
+  - name: Emotions
+    description: Emotions operations.
+  - name: Tasks
+    description: Tasks operations.
+  - name: Users
+    description: Users operations.
+  - name: Weeks
+    description: Weeks operations.
+servers:
+  - url: http://localhost:3000
+  - url: https://fullstack-genesis-project.onrender.com

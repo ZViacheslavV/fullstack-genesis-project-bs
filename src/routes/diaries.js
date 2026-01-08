@@ -3,7 +3,7 @@ import { authenticate } from '../middlewares/authenticate.js';
 import {
   createDiaryValidation,
   updateDiaryValidation,
-} from '../validation/diaries.js';
+} from '../validations/diaries.js';
 import {
   createDiary,
   getDiaries,
@@ -13,11 +13,11 @@ import {
 
 const diariesRouter = Router();
 
-diariesRouter.use(authenticate);
+diariesRouter.use('/diaries', authenticate);
 
-diariesRouter.post('/', createDiaryValidation, createDiary);
-diariesRouter.get('/', getDiaries);
-diariesRouter.patch('/:id', updateDiaryValidation, updateDiary);
-diariesRouter.delete('/:id', deleteDiary);
+diariesRouter.post('/diaries', createDiaryValidation, createDiary);
+diariesRouter.get('/diaries', getDiaries);
+diariesRouter.patch('/diaries/:id', updateDiaryValidation, updateDiary);
+diariesRouter.delete('/diaries/:id', deleteDiary);
 
 export default diariesRouter;
