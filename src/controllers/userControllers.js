@@ -15,11 +15,11 @@ export const updateUserAvatar = async (req, res) => {
 
   const updateUser = await UsersCollection.findByIdAndUpdate(
     req.user._id,
-    { avatar: result.secure_url },
+    { photo: result.secure_url },
     { new: true },
   );
 
-  res.status(200).json({ avatar: updateUser.avatar });
+  res.status(200).json({ url: updateUser.avatar });
 };
 
 export const updateCurrentUser = async (req, res) => {
