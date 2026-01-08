@@ -4,6 +4,7 @@ import {
   MS_IN_DAY,
   TOTAL_DAYS,
 } from '../constants/times.js';
+import { getDemoInfo } from '../services/weeks.js';
 
 export const calcCurWeek = (daysLeft) =>
   Math.floor((TOTAL_DAYS - daysLeft) / 7) + 1;
@@ -21,13 +22,24 @@ export const calcDaysLeftToBirth = (estimateBirthDay) => {
   return Math.ceil((date - today) / MS_IN_DAY);
 };
 
-export const calcDemoDaysLeft = () => {
-  const weeks = DEMO_WEEKS[Math.floor(Math.random() * DEMO_WEEKS.length)];
+export const calcDemoWeek = () => {
+  const weekNumber = DEMO_WEEKS[Math.floor(Math.random() * DEMO_WEEKS.length)];
+  const daysLeftToBirth = (42 - weekNumber) * 7;
 
-  const result = new Date();
-  result.setDate(result.getDate() + weeks * 7);
-
-  return result.toISOString().slice(0, 10);
+  return { weekNumber, daysLeftToBirth };
 };
 
-//TODO Recheck
+export const calcCurrentWeekFromUser = (user) => {
+  if (!user?.dueDate) return getDemoInfo();
+
+  const today = new Date();
+  const dueDate = new Date(user.dueDate);
+
+  const daysLeftToBirth = Math.max(0, Math.ceil((dueDate - today) / MS_IN_DAY));
+  const weekNumber = Math.min(
+    42,
+    Math.max(1, 42 - Math.floor(daysLeftToBirth / 7)),
+  );
+
+  return { weekNumber, daysLeftToBirth };
+};
