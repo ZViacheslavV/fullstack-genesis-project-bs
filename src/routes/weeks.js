@@ -1,10 +1,20 @@
 import { Router } from 'express';
-import { getDemoController } from '../controllers/weeks.js';
+import {
+  getBabyController,
+  getDemoController,
+  getMomController,
+  getWeeksController,
+} from '../controllers/weeks.js';
+// import { authenticate } from '../middlewares/authenticate.js'; //TODO auth
 
 const weeksRouter = Router();
 
 weeksRouter.get('/weeks/demo', getDemoController);
 
-export default weeksRouter;
+// weeksRouter.use('/weeks', authenticate); //TODO auth
 
-//TODO routes?
+weeksRouter.get('/weeks', getWeeksController);
+weeksRouter.get('/weeks/baby/:weekNumber', getBabyController);
+weeksRouter.get('/weeks/mom/:weekNumber', getMomController);
+
+export default weeksRouter;

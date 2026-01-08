@@ -1,41 +1,61 @@
 import createHttpError from 'http-errors';
 import { BabyStatesCollection } from '../models/babyStates.js';
-import { calcDaysLeftToBirth, calcCurWeek } from '../utils/calculateDates.js';
+import {
+  calcCurrentWeekFromUser,
+  calcDemoWeek,
+} from '../utils/calculateDates.js';
+import { MomStatesCollection } from '../models/momStates.js';
+import { validateWeekNumber } from '../utils/validateWeekNumber.js';
 
-export const getMyDay = async (estimateBirthDate) => {
-  if (!estimateBirthDate)
-    throw createHttpError(400, 'estimateBirthDate is required');
+export const getDemoInfo = async () => {
+  const { weekNumber, daysLeftToBirth } = calcDemoWeek();
 
-  const daysLeftToBirth = calcDaysLeftToBirth(estimateBirthDate);
-  const currentWeek = calcCurWeek(daysLeftToBirth);
+  const babyState = await BabyStatesCollection.findOne({ weekNumber });
+  const momState = await MomStatesCollection.findOne({ weekNumber });
 
-  const babyState = await BabyStatesCollection.findOne({
-    weekNumber: currentWeek,
-  });
+  if (!babyState || !momState)
+    throw createHttpError(404, `No info found for week ${weekNumber}`);
 
-  if (!babyState)
-    throw createHttpError(404, `Baby state not found for week ${currentWeek}`);
+  return { weekNumber, daysLeftToBirth, babyState, momState, asd: 25 };
+};
 
-  const {
-    _id,
-    weekNumber,
-    babySize,
-    babyWeight,
-    image,
-    babyActivity,
-    babyDevelopment,
-    momDailyTips,
-  } = babyState;
+export const getWeeksService = async (user) => {
+  // if (!user) throw createHttpError(401, 'No user found, auth problem'); //TODO auth check
 
-  return {
-    _id,
-    daysLeftToBirth,
-    weekNumber,
-    babySize,
-    babyWeight,
-    image,
-    babyActivity,
-    babyDevelopment,
-    momDailyTips,
-  };
+  const { weekNumber, daysLeftToBirth } = calcCurrentWeekFromUser(user);
+
+  const babyState = await BabyStatesCollection.findOne({ weekNumber });
+  const momState = await MomStatesCollection.findOne({ weekNumber });
+
+  if (!babyState || !momState) {
+    throw createHttpError(404, 'Data not found for this week');
+  }
+
+  return { weekNumber, daysLeftToBirth, babyState, momState };
+};
+
+export const getBabyService = async (weekNum, user) => {
+  // if (!user) throw createHttpError(401, 'No user found, auth problem'); //TODO auth check
+
+  const weekNumber = weekNum
+    ? validateWeekNumber(weekNum)
+    : calcCurrentWeekFromUser(user);
+
+  const babyState = await BabyStatesCollection.findOne({ weekNumber });
+  if (!babyState) throw createHttpError(404, 'No info for babyState');
+
+  return babyState;
+};
+
+export const getMomService = async (weekNum, user) => {
+  // if (!user) throw createHttpError(401, 'No user found, auth problem'); //TODO auth check
+
+  const weekNumber = weekNum
+    ? validateWeekNumber(weekNum)
+    : calcCurrentWeekFromUser(user);
+
+  const momState = await MomStatesCollection.findOne({ weekNumber });
+  if (!momState) throw createHttpError(404, 'No info for momState');
+
+  return momState;
 };
