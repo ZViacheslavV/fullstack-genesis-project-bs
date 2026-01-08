@@ -31,7 +31,7 @@ export const calcDemoWeek = () => {
 
 export const calcCurrentWeekFromUser = (user) => {
   if (!user?.dueDate) return getDemoInfo();
-
+  console.log(user?.dueDate);
   const today = new Date();
   const dueDate = new Date(user.dueDate);
 

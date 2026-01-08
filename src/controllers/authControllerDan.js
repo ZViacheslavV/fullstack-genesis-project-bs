@@ -1,7 +1,7 @@
 import createHttpError from 'http-errors';
 import { UsersCollection } from '../models/user.js';
 import bcrypt from 'bcrypt';
-import { createSession, setSessionCookies } from '../services/authOld.js';
+import { createSession, setSessionCookies } from '../services/authDan.js';
 import { SessionsCollection } from '../models/session.js';
 
 export const registerUser = async (req, res, next) => {
@@ -10,7 +10,7 @@ export const registerUser = async (req, res, next) => {
 
     const userExists = await UsersCollection.findOne({ email });
     if (userExists) {
-      return next(createHttpError(400, 'Email is in use'));
+      return next(createHttpError(400, 'Email is in useasd'));
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
