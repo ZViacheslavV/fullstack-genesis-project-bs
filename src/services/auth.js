@@ -1,9 +1,10 @@
 import createHttpError from 'http-errors';
-import { User } from '../models/user.js';
+// import { User } from '../models/user.js';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/times.js';
 import { SessionsCollection } from '../models/session.js';
+import { UsersCollection } from '../models/user.js';
 
 const createSession = (userId) => ({
   userId,
@@ -14,19 +15,22 @@ const createSession = (userId) => ({
 });
 
 export const registerUser = async (payload) => {
-  const existingUser = await User.findOne({ email: payload.email });
+  const existingUser = await UsersCollection.findOne({ email: payload.email });
 
   if (existingUser) throw createHttpError(409, 'Email in use');
 
   const hashedPassword = await bcrypt.hash(payload.password, 10);
 
-  const user = await User.create({ ...payload, password: hashedPassword });
+  const user = await UsersCollection.create({
+    ...payload,
+    password: hashedPassword,
+  });
 
   return user;
 };
 
 export const loginUser = async (payload) => {
-  const existingUser = await User.findOne({ email: payload.email });
+  const existingUser = await UsersCollection.findOne({ email: payload.email });
 
   if (!existingUser) throw createHttpError(401, 'Credentials are invalid');
 
@@ -62,7 +66,7 @@ export const refreshSession = async (sessionId, refreshToken) => {
     if (session.refreshTokenValidUntil < new Date())
       throw createHttpError(401, 'Session expired');
 
-    const user = await User.findById(session.userId);
+    const user = await UsersCollection.findById(session.userId);
 
     if (!user) throw createHttpError(401, 'Session not found');
 
