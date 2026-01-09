@@ -17,7 +17,16 @@ export const startServer = () => {
 
   app.use(
     logger,
-    cors(),
+    cors({
+      origin: [
+        'https://fullstack-genesis-project.vercel.app/',
+        'http://localhost:3000',
+        'http://localhost:3001',
+      ],
+      credentials: true,
+      methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+    }),
     cookieParser(),
     json({
       type: ['application/vnd.api+json', 'application/json'],
