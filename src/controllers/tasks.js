@@ -21,7 +21,10 @@ export const updateTaskStatus = async (req, res, next) => {
     const { taskId } = req.params;
     const { isDone } = req.body;
     const task = await TasksCollection.findOneAndUpdate(
-      { _id: taskId, userId: req.user._id }, 
+      {
+        _id: taskId,
+        // userId: req.user._id         
+      }, 
       { isDone }, 
       { new: true }
     );
