@@ -16,14 +16,8 @@ export const calcDemoWeek = () => {
 export const calcCurrentWeekFromUser = (user) => {
   if (!user?.dueDate) return getDemoInfo();
 
-  /*   if (!user) {
-    throw new Error('User not found');
-  } */
-
   const today = new Date();
   const dueDate = new Date(user.dueDate);
-
-  console.log(dueDate);
 
   const daysLeftToBirth = Math.max(0, Math.ceil((dueDate - today) / MS_IN_DAY));
   const weekNumber = Math.min(
