@@ -21,7 +21,7 @@ export const getDemoInfo = async () => {
 };
 
 export const getWeeksService = async (user) => {
-  // if (!user) throw createHttpError(401, 'No user found, auth problem'); //TODO auth check
+  if (!user) throw createHttpError(401, 'No user found, auth problem'); //TODO auth check
 
   let { weekNumber, daysLeftToBirth } = calcCurrentWeekFromUser(user);
 
@@ -39,7 +39,7 @@ export const getWeeksService = async (user) => {
 };
 
 export const getBabyService = async (weekNum, user) => {
-  // if (!user) throw createHttpError(401, 'No user found, auth problem'); //TODO auth check
+  if (!user) throw createHttpError(401, 'No user found, auth problem'); //TODO auth check
 
   const weekNumber = weekNum
     ? validateWeekNumber(weekNum)
@@ -52,7 +52,7 @@ export const getBabyService = async (weekNum, user) => {
 };
 
 export const getMomService = async (weekNum, user) => {
-  // if (!user) throw createHttpError(401, 'No user found, auth problem'); //TODO auth check
+  if (!user) throw createHttpError(401, 'No user found, auth problem'); //TODO auth check
 
   const weekNumber = weekNum
     ? validateWeekNumber(weekNum)
