@@ -17,7 +17,7 @@ export const getDemoInfo = async () => {
   if (!babyState || !momState)
     throw createHttpError(404, `No info found for week ${weekNumber}`);
 
-  return { weekNumber, daysLeftToBirth, babyState, momState, asd: 25 };
+  return { weekNumber, daysLeftToBirth, babyState, momState };
 };
 
 export const getWeeksService = async (user) => {
