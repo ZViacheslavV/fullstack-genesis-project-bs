@@ -9,10 +9,11 @@ import {
   getMyTasks,
   updateTaskStatus,
 } from '../controllers/tasks.js';
+import { authenticate } from '../middlewares/authenticate.js';
 
 const tasksRouter = Router();
 
-// tasksRouter.use('/tasks', authenticate);
+tasksRouter.use('/tasks', authenticate);
 
 tasksRouter.get('/tasks', getMyTasks);
 tasksRouter.post('/tasks', celebrate(createTaskSchema), createTask);
