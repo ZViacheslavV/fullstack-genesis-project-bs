@@ -3,8 +3,8 @@ import usersRouter from './user.js';
 import tasksRouter from './tasks.js';
 import diariesRouter from './diaries.js';
 import weeksRouter from './weeks.js';
-// import authRouter from './authDan.js';
-import authRouter from './auth.js';
+import authRouter from './authDan.js';
+// import authRouter from './auth.js';
 import emotionsRouter from './emotions.js';
 
 const router = Router();
