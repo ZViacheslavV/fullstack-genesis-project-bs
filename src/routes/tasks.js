@@ -18,7 +18,7 @@ tasksRouter.use('/tasks', authenticate);
 tasksRouter.get('/tasks', getMyTasks);
 tasksRouter.post('/tasks', celebrate(createTaskSchema), createTask);
 tasksRouter.patch(
-  '/tasks/:taskId',
+  '/tasks/:taskId/status',
   celebrate(updateTaskStatusSchema),
   updateTaskStatus,
 );
