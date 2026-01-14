@@ -47,7 +47,7 @@ export const loginUser = async (payload) => {
     createSession(existingUser._id),
   );
 
-  return [session, existingUser];
+  return { session, existingUser };
 };
 
 export const logoutUser = async (sessionId, refreshToken) => {
