@@ -3,9 +3,9 @@ import {
   logoutUser,
   refreshSession,
   registerUser,
-  /*   requestResetPasswordEmail, */
-  /*  resetPassword, */
-} from '../services/authBor.js';
+  requestResetPasswordEmail,
+  resetPassword,
+} from '../service/auth.js';
 import { clearSession, setupSession } from '../utils/authHelpersBor.js';
 
 export const registerUserController = async (req, res) => {
@@ -63,7 +63,7 @@ export const logoutController = async (req, res) => {
   res.status(204).send();
 };
 
-/* export const requestResetPasswordEmailController = async (req, res) => {
+export const requestResetPasswordEmailController = async (req, res) => {
   await requestResetPasswordEmail(req.body.email);
 
   res.json({
@@ -81,4 +81,4 @@ export const resetPasswordController = async (req, res) => {
     message: 'Password was successfully reset!',
     data: {},
   });
-}; */
+};

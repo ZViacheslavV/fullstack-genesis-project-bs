@@ -5,7 +5,7 @@ import {
   getMomController,
   getWeeksController,
 } from '../controllers/weeks.js';
-import { authenticate } from '../middlewares/authenticateBor.js'; //TODO auth switch
+import { authenticate } from '../middlewares/authenticate.js'; //TODO auth switch
 
 const weeksRouter = Router();
 
