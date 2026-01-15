@@ -1,11 +1,15 @@
-import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/times.js';
+import {
+  // FIFTEEN_MINUTES, //TODO change back to 15 mins
+  ONE_DAY,
+  THIRTY_SECONDS,
+} from '../constants/times.js';
 
 export const setSessionCookies = (res, session) => {
   res.cookie('accessToken', session.accessToken, {
     secure: true,
     httpOnly: true,
     sameSite: 'none',
-    maxAge: FIFTEEN_MINUTES,
+    maxAge: THIRTY_SECONDS /* FIFTEEN_MINUTES */, //TODO change back to 15 mins
   });
 
   res.cookie('refreshToken', session.refreshToken, {
