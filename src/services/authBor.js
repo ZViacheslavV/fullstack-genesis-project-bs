@@ -1,12 +1,12 @@
 import createHttpError from 'http-errors';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+/* import jwt from 'jsonwebtoken'; */
 import crypto from 'node:crypto';
-import { User } from '../db/models/user.js';
-import { Session } from '../db/models/session.js';
-import { sendResetPasswordEmail } from './email.js';
+/* import { sendResetPasswordEmail } from './email.js';
 import { getEnvVar } from '../helper/getEnvVar.js';
-import { ENV_VARS } from '../constants/envVars.js';
+import { ENV_VARS } from '../constants/envVars.js'; */
+import { UsersCollection } from '../models/user.js';
+import { SessionsCollection } from '../models/session.js';
 
 const createSession = (userId) => ({
   userId,
@@ -17,20 +17,23 @@ const createSession = (userId) => ({
 });
 
 export const registerUser = async (payload) => {
-  const foundUser = await User.findOne({ email: payload.email });
+  const foundUser = await UsersCollection.findOne({ email: payload.email });
 
   if (foundUser)
     throw createHttpError(409, 'User with this email already exists');
 
   const hashedPassword = await bcrypt.hash(payload.password, 10);
 
-  const user = await User.create({ ...payload, password: hashedPassword });
+  const user = await UsersCollection.create({
+    ...payload,
+    password: hashedPassword,
+  });
 
   return user;
 };
 
 export const loginUser = async (payload) => {
-  const foundUser = await User.findOne({ email: payload.email });
+  const foundUser = await UsersCollection.findOne({ email: payload.email });
 
   if (!foundUser) throw createHttpError(400, 'Credentials are invalid');
 
@@ -41,44 +44,47 @@ export const loginUser = async (payload) => {
 
   if (!arePasswordsEqual) throw createHttpError(400, 'Credentials are invalid');
 
-  await Session.findOneAndDelete({ userId: foundUser._id });
+  await SessionsCollection.findOneAndDelete({ userId: foundUser._id });
 
-  const session = await Session.create(createSession(foundUser._id));
+  const session = await SessionsCollection.create(createSession(foundUser._id));
 
   return session;
 };
 
 export const refreshSession = async (sessionId, refreshToken) => {
   try {
-    const session = await Session.findOne({ _id: sessionId, refreshToken });
+    const session = await SessionsCollection.findOne({
+      _id: sessionId,
+      refreshToken,
+    });
 
     if (!session) throw createHttpError(401, 'Session not found!');
 
     if (session.refreshTokenValidUntil < new Date())
       throw createHttpError(401, 'Session expired!');
 
-    const user = await User.findById(session.userId);
+    const user = await UsersCollection.findById(session.userId);
 
     if (!user) throw createHttpError(401, 'Session not found!');
 
-    await Session.findOneAndDelete({ _id: sessionId, refreshToken });
+    await SessionsCollection.findOneAndDelete({ _id: sessionId, refreshToken });
 
-    const newSession = await Session.create(createSession(user._id));
+    const newSession = await SessionsCollection.create(createSession(user._id));
 
     return newSession;
   } catch (err) {
-    await Session.findOneAndDelete({ _id: sessionId, refreshToken });
+    await SessionsCollection.findOneAndDelete({ _id: sessionId, refreshToken });
 
     throw err;
   }
 };
 
 export const logoutUser = async (sessionId, refreshToken) => {
-  await Session.findOneAndDelete({ _id: sessionId, refreshToken });
+  await SessionsCollection.findOneAndDelete({ _id: sessionId, refreshToken });
 };
 
-export const requestResetPasswordEmail = async (email) => {
-  const user = await User.findOne({ email });
+/* export const requestResetPasswordEmail = async (email) => {
+  const user = await UsersCollection.findOne({ email });
 
   if (!user) return;
 
@@ -95,9 +101,9 @@ export const requestResetPasswordEmail = async (email) => {
   );
 
   await sendResetPasswordEmail(email, { token, username: user.username });
-};
+}; */
 
-export const resetPassword = async ({ token, password }) => {
+/* export const resetPassword = async ({ token, password }) => {
   let jwtPayload;
 
   try {
@@ -106,13 +112,13 @@ export const resetPassword = async ({ token, password }) => {
     throw createHttpError(401, err.message);
   }
 
-  const user = await User.findById(jwtPayload.sub);
+  const user = await UsersCollection.findById(jwtPayload.sub);
 
   if (!user) throw createHttpError(401, 'Token is invalid!');
 
-  await User.findByIdAndUpdate(jwtPayload.sub, {
+  await UsersCollection.findByIdAndUpdate(jwtPayload.sub, {
     password: await bcrypt.hash(password, 10),
   });
 
-  await Session.findOneAndDelete({ userId: user._id });
-};
+  await SessionsCollection.findOneAndDelete({ userId: user._id });
+}; */
