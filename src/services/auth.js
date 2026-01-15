@@ -2,11 +2,7 @@ import createHttpError from 'http-errors';
 // import { User } from '../models/user.js';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
-import {
-  // FIFTEEN_MINUTES,//TODO return 15 mins
-  ONE_DAY,
-  THIRTY_SECONDS,
-} from '../constants/times.js';
+import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/times.js';
 import { SessionsCollection } from '../models/session.js';
 import { UsersCollection } from '../models/user.js';
 
@@ -14,9 +10,7 @@ const createSession = (userId) => ({
   userId,
   accessToken: crypto.randomBytes(30).toString('base64'),
   refreshToken: crypto.randomBytes(30).toString('base64'),
-  accessTokenValidUntil: new Date(
-    Date.now() + THIRTY_SECONDS /* FIFTEEN_MINUTES */,
-  ), //TODO return 15 mins
+  accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
   refreshTokenValidUntil: new Date(Date.now() + ONE_DAY),
 });
 
