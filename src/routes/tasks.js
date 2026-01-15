@@ -9,7 +9,7 @@ import {
   getMyTasks,
   updateTaskStatus,
 } from '../controllers/tasks.js';
-import { authenticate } from '../middlewares/authenticateBor.js';
+import { authenticate } from '../middlewares/authenticate.js';
 
 const tasksRouter = Router();
 
