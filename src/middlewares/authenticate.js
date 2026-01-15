@@ -8,7 +8,7 @@ export const authenticate = async (req, res, next) => {
   if (!accessToken) throw createHttpError(401, 'Missing access token');
 
   const session = await SessionsCollection.findOne({ accessToken });
-  if (!session) throw createHttpError(401, 'Session not found');
+  if (!session) throw createHttpError(401, 'Authenticate session not found ');
 
   const isAccessTokenExpired =
     new Date() > new Date(session.accessTokenValidUntil);
