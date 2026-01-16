@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose';
+import { mongoose, model, Schema } from 'mongoose';
 import { GENDERS } from '../constants/genders.js';
 import { isDateInRange, isValidYYYYMMDD } from '../utils/dateValidation.js';
 
@@ -50,7 +50,8 @@ userSchema.methods.toJSON = function () {
   return obj;
 };
 
-export const UsersCollection = model('User', userSchema);
+export const UsersCollection =
+  mongoose.models.User || model('User', userSchema);
 
 //TODO Check
 /* name - max: 32, required,
