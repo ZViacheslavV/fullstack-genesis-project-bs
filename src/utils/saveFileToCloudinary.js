@@ -9,6 +9,7 @@ cloudinary.config({
 });
 
 export async function saveFileToCloudinary(buffer, userId) {
+  console.log('cloud name:', process.env.CLOUDINARY_CLOUD_NAME);
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
