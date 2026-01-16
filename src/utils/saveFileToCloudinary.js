@@ -8,8 +8,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export async function saveFileToCloudinary(buffer, userId) {
-  console.log('cloud name:', process.env.CLOUDINARY_CLOUD_NAME);
+export async function saveFileToCloudinary(buffer, userId) {  
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
