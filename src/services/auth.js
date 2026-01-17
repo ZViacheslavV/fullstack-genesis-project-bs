@@ -6,7 +6,7 @@ import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/times.js';
 import { SessionsCollection } from '../models/session.js';
 import { UsersCollection } from '../models/user.js';
 
-const createSession = (userId) => ({
+export const createSession = (userId) => ({
   userId,
   accessToken: crypto.randomBytes(30).toString('base64'),
   refreshToken: crypto.randomBytes(30).toString('base64'),
