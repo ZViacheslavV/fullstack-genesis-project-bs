@@ -14,3 +14,16 @@ export const loginUserSchema = {
     password: Joi.string().required(),
   }),
 };
+
+export const requestResetPasswordEmailSchema = {
+  [Segments.BODY]: Joi.object({
+    email: Joi.string().email().required(),
+  }),
+};
+
+export const resetPasswordSchema = {
+  [Segments.BODY]: Joi.object({
+    token: Joi.string().required(),
+    password: Joi.string().min(8).max(128).required(),
+  }),
+};
