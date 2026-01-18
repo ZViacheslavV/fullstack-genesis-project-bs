@@ -1,14 +1,17 @@
 import { Router } from 'express';
 import { OAuth2Client } from 'google-auth-library';
-import { googleAuthController } from '../controllers/authGoogle.js';
+
+import { googleAuthService } from '../services/authGoogle.js';
+import { setSessionCookies } from '../utils/authHelpers.js';
 
 const router = Router();
 
 const client = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
-  'http://localhost:3000/api/auth/google/callback'
+  `${process.env.BACKEND_URL}/api/auth/google/callback`
 );
+
 
 router.get('/auth/google', (req, res) => {
   const url = client.generateAuthUrl({
@@ -20,14 +23,29 @@ router.get('/auth/google', (req, res) => {
   res.redirect(url);
 });
 
-router.get('/auth/google/callback', async (req, res) => {
-  res.json({
-    message: 'Google callback received',
-    code: req.query.code,
-  });
+router.get('/auth/google/callback', async (req, res, next) => {
+  try {
+    const { code } = req.query;
+
+    if (!code) {
+      return res.status(400).json({ message: 'Code is missing' });
+    }
+
+    const { tokens } = await client.getToken(code);
+    client.setCredentials(tokens);
+
+    if (!tokens.id_token) {
+      return res.status(400).json({ message: 'id_token is missing' });
+    }
+
+    const session = await googleAuthService(tokens.id_token);
+
+    setSessionCookies(res, session);
+
+    res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
+  } catch (error) {
+    next(error);
+  }
 });
-
-
-router.post('/auth/google', googleAuthController);
 
 export default router;
