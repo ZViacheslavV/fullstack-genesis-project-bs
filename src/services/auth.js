@@ -9,7 +9,7 @@ import { ENV_VARS } from '../constants/envVars.js';
 import jwt from 'jsonwebtoken';
 import { sendEmail } from '../utils/sendEmail.js';
 
-const createSession = (userId) => ({
+export const createSession = (userId) => ({
   userId,
   accessToken: crypto.randomBytes(30).toString('base64'),
   refreshToken: crypto.randomBytes(30).toString('base64'),
@@ -50,7 +50,7 @@ export const loginUser = async (payload) => {
     createSession(existingUser._id),
   );
 
-  return { session, existingUser };
+  return { session, user: existingUser };
 };
 
 export const logoutUser = async (sessionId, refreshToken) => {
@@ -64,14 +64,14 @@ export const refreshSession = async (sessionId, refreshToken) => {
       refreshToken,
     });
 
-    if (!session) throw createHttpError(401, 'Session not found');
+    if (!session) throw createHttpError(401, 'Ref: Session not found');
 
     if (session.refreshTokenValidUntil < new Date())
       throw createHttpError(401, 'Session expired');
 
     const user = await UsersCollection.findById(session.userId);
 
-    if (!user) throw createHttpError(401, 'Session not found');
+    if (!user) throw createHttpError(401, 'Use: Session not found');
 
     await SessionsCollection.findOneAndDelete({ _id: sessionId, refreshToken });
 
