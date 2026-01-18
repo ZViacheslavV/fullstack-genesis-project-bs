@@ -36,7 +36,7 @@ export const googleAuthService = async (idToken) => {
       email,
       name,
       photo: picture,
-      password: crypto.randomBytes(16).toString('hex'), // заглушка
+      password: crypto.randomBytes(16).toString('hex'),
     });
   }
   await SessionsCollection.findOneAndDelete({ userId: user._id });
