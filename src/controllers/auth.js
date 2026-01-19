@@ -3,6 +3,8 @@ import {
   logoutUser,
   refreshSession,
   registerUser,
+  requestResetPasswordEmail,
+  resetPassword,
 } from '../services/auth.js';
 import { clearSession, setSessionCookies } from '../utils/authHelpers.js';
 
@@ -55,4 +57,24 @@ export const refreshSessionController = async (req, res) => {
 
     throw err;
   }
+};
+
+export const requestResetPasswordEmailController = async (req, res) => {
+  await requestResetPasswordEmail(req.body.email);
+
+  res.json({
+    status: 200,
+    message: 'Електронний лист для скидання пароля успішно надіслано!',
+    data: {},
+  });
+};
+
+export const resetPasswordController = async (req, res) => {
+  await resetPassword(req.body);
+
+  res.json({
+    status: 200,
+    message: 'Пароль було успішно змінено!',
+    data: {},
+  });
 };

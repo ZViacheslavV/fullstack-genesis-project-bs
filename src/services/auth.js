@@ -5,6 +5,9 @@ import crypto from 'crypto';
 import { FIFTEEN_MINUTES, ONE_DAY } from '../constants/times.js';
 import { SessionsCollection } from '../models/session.js';
 import { UsersCollection } from '../models/user.js';
+import { ENV_VARS } from '../constants/envVars.js';
+import jwt from 'jsonwebtoken';
+import { sendEmail } from '../utils/sendEmail.js';
 
 export const createSession = (userId) => ({
   userId,
@@ -79,4 +82,52 @@ export const refreshSession = async (sessionId, refreshToken) => {
     await SessionsCollection.findOneAndDelete({ _id: sessionId, refreshToken });
     throw err;
   }
+};
+
+export const requestResetPasswordEmail = async (req, res) => {
+  const { email } = req.body;
+  const user = await UsersCollection.findOne({ email });
+
+  if (!user) {
+    return res.json({
+      status: 200,
+      message: 'Лист для скидання пароля успішно надіслано!',
+    });
+  }
+
+  const token = jwt.sign(
+    {
+      sub: user._id,
+      name: user.name,
+      email: user.email,
+    },
+    ENV_VARS(ENV_VARS.JWT_SECRET),
+    {
+      expiresIn: '15m',
+    },
+  );
+
+  await sendEmail(email, { token, username: user.name });
+};
+
+export const resetPassword = async (payload) => {
+  let jwtpayload;
+
+  try {
+    jwtpayload = jwt.verify(payload.token, ENV_VARS(ENV_VARS.JWT_SECRET));
+  } catch (err) {
+    throw createHttpError(401, err.message);
+  }
+
+  const user = await UsersCollection.findById(jwtpayload.sub);
+
+  if (!user) {
+    throw createHttpError(401, 'Токен не валідний!');
+  }
+
+  await UsersCollection.findByIdAndUpdate(jwtpayload.sub, {
+    password: await bcrypt.hash(payload.password, 10),
+  });
+
+  await SessionsCollection.findOneAndDelete({ userId: user._id });
 };
