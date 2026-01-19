@@ -89,10 +89,7 @@ export const requestResetPasswordEmail = async (req, res) => {
   const user = await UsersCollection.findOne({ email });
 
   if (!user) {
-    return res.json({
-      status: 200,
-      message: 'Лист для скидання пароля успішно надіслано!',
-    });
+    return;
   }
 
   const token = jwt.sign(
@@ -107,7 +104,7 @@ export const requestResetPasswordEmail = async (req, res) => {
     },
   );
 
-  await sendEmail(email, { token, username: user.name });
+  await sendEmail(email, { token, name: user.name });
 };
 
 export const resetPassword = async (payload) => {
@@ -129,5 +126,5 @@ export const resetPassword = async (payload) => {
     password: await bcrypt.hash(payload.password, 10),
   });
 
-  await SessionsCollection.findOneAndDelete({ userId: user._id });
+  await SessionsCollection.deleteMany({ userId: user._id });
 };
