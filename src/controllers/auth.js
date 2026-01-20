@@ -59,22 +59,30 @@ export const refreshSessionController = async (req, res) => {
   }
 };
 
-export const requestResetPasswordEmailController = async (req, res) => {
-  await requestResetPasswordEmail(req.body.email);
+export const requestResetPasswordEmailController = async (req, res, next) => {
+  try {
+    await requestResetPasswordEmail(req.body.email);
 
-  res.json({
-    status: 200,
-    message: 'Електронний лист для скидання пароля успішно надіслано!',
-    data: {},
-  });
+    res.json({
+      status: 200,
+      message: 'Електронний лист для скидання пароля успішно надіслано!',
+      data: {},
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
-export const resetPasswordController = async (req, res) => {
-  await resetPassword(req.body);
+export const resetPasswordController = async (req, res, next) => {
+  try {
+    await resetPassword(req.body);
 
-  res.json({
-    status: 200,
-    message: 'Пароль було успішно змінено!',
-    data: {},
-  });
+    res.json({
+      status: 200,
+      message: 'Пароль було успішно змінено!',
+      data: {},
+    });
+  } catch (err) {
+    next(err);
+  }
 };

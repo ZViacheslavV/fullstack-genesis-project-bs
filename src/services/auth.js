@@ -8,6 +8,7 @@ import { UsersCollection } from '../models/user.js';
 import { ENV_VARS } from '../constants/envVars.js';
 import jwt from 'jsonwebtoken';
 import { sendEmail } from '../utils/sendEmail.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
 
 export const createSession = (userId) => ({
   userId,
@@ -84,50 +85,48 @@ export const refreshSession = async (sessionId, refreshToken) => {
   }
 };
 
-export const requestResetPasswordEmail = async (req, res) => {
-  const { email } = req.body;
+export const requestResetPasswordEmail = async (email) => {
   const user = await UsersCollection.findOne({ email });
 
-  if (!user) {
-    return res.json({
-      status: 200,
-      message: 'Лист для скидання пароля успішно надіслано!',
-    });
-  }
+  if (!user) return;
+
+  const jwtSecret = getEnvVar(ENV_VARS.JWT_SECRET);
 
   const token = jwt.sign(
     {
-      sub: user._id,
-      name: user.name,
-      email: user.email,
+      sub: user._id.toString(),
+      // name: user.name,
+      // email: user.email,
     },
-    ENV_VARS(ENV_VARS.JWT_SECRET),
+    jwtSecret,
     {
       expiresIn: '15m',
     },
   );
 
-  await sendEmail(email, { token, username: user.name });
+  await sendEmail(email, { token, name: user.name });
 };
 
 export const resetPassword = async (payload) => {
+  const jwtSecret = getEnvVar(ENV_VARS.JWT_SECRET);
+
   let jwtpayload;
 
   try {
-    jwtpayload = jwt.verify(payload.token, ENV_VARS(ENV_VARS.JWT_SECRET));
-  } catch (err) {
-    throw createHttpError(401, err.message);
+    jwtpayload = jwt.verify(payload.token, jwtSecret);
+  } catch {
+    throw createHttpError(401, 'Токен не валідний!');
   }
 
   const user = await UsersCollection.findById(jwtpayload.sub);
 
   if (!user) {
-    throw createHttpError(401, 'Токен не валідний!');
+    throw createHttpError(401, 'Користувача не знайдено!');
   }
 
   await UsersCollection.findByIdAndUpdate(jwtpayload.sub, {
     password: await bcrypt.hash(payload.password, 10),
   });
 
-  await SessionsCollection.findOneAndDelete({ userId: user._id });
+  await SessionsCollection.deleteMany({ userId: user._id });
 };
