@@ -47,7 +47,7 @@ router.get('/auth/google/callback', async (req, res, next) => {
 
     setSessionCookies(res, session);
 
-    res.redirect(`${process.env.FRONTEND_URL}/`);
+    res.redirect(`${process.env.FRONTEND_URL}/auth/callback`);
   } catch (error) {
     next(error);
   }
