@@ -5,7 +5,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: This is pregnant tracker app
+  description: This is pregnant tracker app (under development!)
 tags:
   - name: Auth
     description: Auth operations.
