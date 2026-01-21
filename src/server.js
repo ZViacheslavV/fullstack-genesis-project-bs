@@ -11,6 +11,7 @@ import { generateRequestId } from './middlewares/generateRequestIdMiddleware.js'
 import { notFoundHandlerMiddleware } from './middlewares/notFoundHandlerMiddleware.js';
 import { errorHandlerMiddleware } from './middlewares/errorHandlerMiddleware.js';
 import { UPLOAD_DIR } from './constants/path.js';
+import { swaggerDocumentation } from './utils/swaggerDocs.js';
 
 export const startServer = () => {
   const app = express();
@@ -38,6 +39,8 @@ export const startServer = () => {
   app.use('/api', router);
 
   app.use('/uploads', express.static(UPLOAD_DIR));
+
+  app.use('/api-docs', swaggerDocumentation());
 
   app.use(notFoundHandlerMiddleware);
 
