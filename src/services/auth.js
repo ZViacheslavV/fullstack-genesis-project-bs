@@ -130,3 +130,34 @@ export const resetPassword = async (payload) => {
 
   await SessionsCollection.deleteMany({ userId: user._id });
 };
+
+export const changePassword = async ({
+  userId,
+  currentPassword,
+  newPassword,
+}) => {
+  const user = await UsersCollection.findById(userId);
+
+  if (!user) {
+    throw createHttpError(404, 'Користувача не знайдено!');
+  }
+
+  const isValid = await bcrypt.compare(currentPassword, user.password);
+
+  if (!isValid) {
+    throw createHttpError(401, 'Поточний пароль не коректний!');
+  }
+
+  if (currentPassword === newPassword) {
+    throw createHttpError(
+      400,
+      'Новий пароль має бути відмінним від поточного!',
+    );
+  }
+
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  await UsersCollection.findByIdAndUpdate(userId, { password: hashedPassword });
+
+  await SessionsCollection.deleteMany({ userId });
+};

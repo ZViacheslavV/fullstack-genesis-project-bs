@@ -27,3 +27,10 @@ export const resetPasswordSchema = {
     password: Joi.string().min(8).max(128).required(),
   }),
 };
+
+export const changePasswordSchema = {
+  [Segments.BODY]: Joi.object({
+    currentPassword: Joi.string().min(8).max(128).required(),
+    newPassword: Joi.string().min(8).max(128).required(),
+  }),
+};
