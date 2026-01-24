@@ -2,12 +2,14 @@ import { celebrate } from 'celebrate';
 import { Router } from 'express';
 
 import {
+  changePasswordSchema,
   loginUserSchema,
   registerUserSchema,
   requestResetPasswordEmailSchema,
   resetPasswordSchema,
 } from '../validations/authValidation.js';
 import {
+  changePasswordController,
   loginUserController,
   logoutUserController,
   refreshSessionController,
@@ -15,6 +17,7 @@ import {
   requestResetPasswordEmailController,
   resetPasswordController,
 } from '../controllers/auth.js';
+import { authenticate } from '../middlewares/authenticate.js';
 
 const authRouter = Router();
 
@@ -40,6 +43,13 @@ authRouter.post(
   '/auth/reset-password',
   celebrate(resetPasswordSchema),
   resetPasswordController,
+);
+
+authRouter.post(
+  '/auth/change-password',
+  authenticate,
+  celebrate(changePasswordSchema),
+  changePasswordController,
 );
 
 export default authRouter;

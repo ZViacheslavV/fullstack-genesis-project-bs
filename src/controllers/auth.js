@@ -1,4 +1,5 @@
 import {
+  changePassword,
   loginUser,
   logoutUser,
   refreshSession,
@@ -76,6 +77,24 @@ export const requestResetPasswordEmailController = async (req, res, next) => {
 export const resetPasswordController = async (req, res, next) => {
   try {
     await resetPassword(req.body);
+
+    res.json({
+      status: 200,
+      message: 'Пароль було успішно змінено!',
+      data: {},
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const changePasswordController = async (req, res, next) => {
+  try {
+    await changePassword({
+      userId: req.user._id,
+      currentPassword: req.body.currentPassword,
+      newPassword: req.body.newPassword,
+    });
 
     res.json({
       status: 200,
