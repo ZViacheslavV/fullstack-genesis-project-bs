@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { OAuth2Client } from 'google-auth-library';
+import { googleAuthController } from '../controllers/authGoogle.js';
 
 
 const router = Router();
@@ -47,5 +48,7 @@ router.get('/auth/google/callback', async (req, res, next) => {
     next(error);
   }
 });
+
+router.post('/auth/google', googleAuthController);
 
 export default router;
