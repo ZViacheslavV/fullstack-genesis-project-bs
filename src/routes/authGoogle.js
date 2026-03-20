@@ -1,8 +1,7 @@
 import { Router } from 'express';
 import { OAuth2Client } from 'google-auth-library';
+import { googleAuthController } from '../controllers/authGoogle.js';
 
-import { googleAuthService } from '../services/authGoogle.js';
-import { setSessionCookies } from '../utils/authHelpers.js';
 
 const router = Router();
 
@@ -39,18 +38,17 @@ router.get('/auth/google/callback', async (req, res, next) => {
     const { tokens } = await client.getToken(code);
     client.setCredentials(tokens);
 
-    // if (!tokens.id_token) {
-    //   return res.status(400).json({ message: 'id_token is missing' });
-    // }
-
-    const session = await googleAuthService(tokens.id_token);
-
-    setSessionCookies(res, session);
-
-    res.redirect(`${process.env.FRONTEND_URL}/auth/callback`);
+    if (!tokens.id_token) {
+      return res.status(400).json({ message: 'id_token is missing' });
+    }
+    res.redirect(
+      `${process.env.FRONTEND_URL}/auth/callback?token=${tokens.id_token}`
+    );
   } catch (error) {
     next(error);
   }
 });
+
+router.post('/auth/google', googleAuthController);
 
 export default router;
